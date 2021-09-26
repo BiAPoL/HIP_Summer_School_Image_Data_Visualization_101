@@ -42,5 +42,44 @@ conda install jupyter notebook scikit-image
 
 We can then test the installation, e.g. by executing the following code in a juypter notebook. Therefore, we start jupyter by entering this on the command line:
 ```python
-jupyter notebook 
+jupyter notebook pyimagej_first_test.ipynb
 ```
+
+Afterwards, we paste this code in the notebook and enter `SHIFT-Enter`
+```python
+import imagej
+import os
+from skimage.io import imread, imshow, imsave
+
+# determine the current folder; and deal with backslashes \ on Windows; all operating systems acceppt /
+current_directory = os.getcwd().replace("\\", "/") + "/"
+
+# Start up ImageJ
+ij = imagej.init()
+
+# define input and output
+source_image_file = 'https://wsr.imagej.net/images/Cell_Colony.jpg'
+result_image_file = current_directory + "test.tif"
+
+# define code to run
+macro_code = """
+open("{source_image_file}");
+run("Find Edges");
+saveAs("Tiff", "{result_image_file}");
+""".format(
+    source_image_file = source_image_file, 
+    result_image_file = result_image_file
+)
+
+# execute the macro
+ij.py.run_macro(macro_code)
+
+# show input and output
+source_image = imread(source_image_file)
+imshow(source_image)
+
+result_image = imread(result_image_file)
+imshow(result_image)
+```
+... that should result in this output:
+![](first_pyimagej_jupyter_notebook.png)
